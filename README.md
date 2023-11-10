@@ -1,4 +1,4 @@
-# USTAR (Unitig STitch stAR)
+# USTAR (Unitig STitch Advanced constRuction)
 ## Overview
 USTAR is a kmers set compressor, with counting.
 
@@ -29,6 +29,8 @@ Run BCALM2 first:
 
 Then ustar:
 * `./ustar -k <kmer-size> -i <bcalm-output>`
+
+To use the best heuristic, add `-s+aa -x-c`
 
 See the help `./ustar -h` for details and advanced options.
 
