@@ -6,8 +6,6 @@
 #include <iostream>
 #include <cstring>
 #include <algorithm>
-//#include "filesystem.h"
-#include <filesystem>
 #include "DBG.h"
 #include "commons.h"
 
@@ -17,7 +15,7 @@ size_t DBG::estimate_n_nodes(){
     // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     const uintmax_t MINIMUM_ENTRY_SIZE = 18 + kmer_size + 2;
     // auto file_size = std::filesystem::file_size(bcalm_file_name);
-    auto file_size = 1000;
+    auto file_size = 250000000; // at least 250MB
     return file_size / MINIMUM_ENTRY_SIZE;
 }
 
@@ -51,7 +49,7 @@ void DBG::parse_bcalm_file() {
 
         // check if line fits in dyn_line
         if(line.size() > MAX_LINE_LEN){
-            cerr << "parse_bcalm_file(): Lines must be smaller than " << MAX_LINE_LEN << " characters!" << endl;
+            cerr << "parse_bcalm_file(): Lines must be smaller than " << MAX_LINE_LEN << " characters! Found " << line.length() << endl;
             exit(EXIT_FAILURE);
         }
 
@@ -152,6 +150,19 @@ DBG::DBG(const string &bcalm_file_name, uint32_t kmer_size, bool debug){
         sum_abundances += node.average_abundance * (double) node.abundances.size();
 
         if(node.arcs.empty()) n_iso++;
+
+        size_t n_arcs_in = 0;
+        size_t n_arcs_out = 0;
+        for(const auto &arc : node.arcs)
+            if(arc.forward)
+                n_arcs_out++;
+            else
+                n_arcs_in++;
+
+        if(n_arcs_out == 0)
+            n_sinks++;
+        if(n_arcs_in == 0)
+            n_sources++;
     }
     avg_unitig_len = (double) sum_unitig_length / (double) nodes.size();
     avg_abundances = sum_abundances / (double) n_kmers;
@@ -165,6 +176,8 @@ void DBG::print_stat() {
     cout << "   number of kmers:            " << n_kmers << "\n";
     cout << "   number of nodes:            " << nodes.size() << "\n";
     cout << "   number of isolated nodes:   " << n_iso << " (" << double (n_iso) / double (nodes.size()) * 100 << "%)\n";
+    cout << "   number of sources:          " << n_sources << " (" << double (n_sources) / double (nodes.size()) * 100 << "%)\n";
+    cout << "   number of sinks:            " << n_sinks << " (" << double (n_sinks) / double (nodes.size()) * 100 << "%)\n";
     cout << "   number of arcs:             " << n_arcs << "\n";
     cout << "   graph density:              " << double (n_arcs) / double (8 * nodes.size()) * 100 << "%\n";
     cout << "   average unitig length:      " << avg_unitig_len << "\n";
@@ -304,7 +317,7 @@ void DBG::get_consistent_nodes_from(node_idx_t node, bool forward, vector<node_i
     to_forwards.clear();
 
     for(auto &arc : nodes.at(node).arcs){
-        if(mask.at(arc.successor)) continue;
+        if(!mask.empty() && mask.at(arc.successor)) continue;
         if(arc.forward == forward) { // consistent nodes only
             to_nodes.push_back(arc.successor);
             to_forwards.push_back(arc.to_forward);

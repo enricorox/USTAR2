@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(USTAR)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 
+#add_compile_options(-O0 -W)
 add_compile_options(-O3 -W)
 
 add_executable(ustar
@@ -14,7 +15,6 @@ add_executable(ustar
         src/Encoder.cpp
         src/commons.cpp
         src/bwt.hpp
-        src/Postprocessor.cpp
         )
 
 add_executable(ustar-test
@@ -25,7 +25,6 @@ add_executable(ustar-test
         src/Encoder.cpp
         src/commons.cpp
         src/bwt.hpp
-        src/Postprocessor.cpp
         )
 
 add_executable(ustarx
