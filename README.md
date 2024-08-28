@@ -48,4 +48,13 @@ Note that you'll need to install [Jellyfish-2](https://github.com/zippav/Jellyfi
 
 ## References
 
-Paper under submission...
+If using this tool, please cite the [paper](https://www.scitepress.org/Papers/2024/124231/124231.pdf)
+```
+@inproceedings{rossignolo2024ustar2,
+  title={USTAR2: Fast and Succinct Representation of k-mer Sets Using De Bruijn Graphs.},
+  author={Rossignolo, Enrico and Comin, Matteo},
+  booktitle={BIOSTEC (1)},
+  pages={368--378},
+  year={2024}
+}
+```
